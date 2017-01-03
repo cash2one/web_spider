@@ -69,12 +69,11 @@ def read_config(ctx, param, value):
 def cli(ctx, **kwargs):
     '''根据参数配置运行环境'''
 
-<<<<<<< HEAD
+
     if not kwargs.get('config'):
         print "usage: webspider.py -c test.conf"
         return
-=======
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
+
     if not os.path.exists(kwargs['data_path']):
         os.mkdir(kwargs['data_path'])
 
@@ -329,18 +328,13 @@ def phantomjs(ctx, phantomjs_path, port, auto_restart, args):
     g = ctx.obj
     _quit = []
     phantomjs_fetcher = os.path.join(
-<<<<<<< HEAD
+
         os.path.dirname(__file__), 'fetcher/phantomjs/phantomjs_server.js')
     cmd = [phantomjs_path,
            # this may cause memory leak: https://github.com/ariya/phantomjs/issues/12903
            #'--load-images=false',
            #'--remote-debugger-port=9000',
-=======
-        os.path.dirname(__file__), 'fetcher/phantomjs_fetcher.js')
-    cmd = [phantomjs_path,
-           # this may cause memory leak: https://github.com/ariya/phantomjs/issues/12903
-           #'--load-images=false',
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
+
            '--ssl-protocol=any',
            '--disk-cache=true'] + list(args or []) + [phantomjs_fetcher, str(port)]
 
@@ -369,10 +363,9 @@ def phantomjs(ctx, phantomjs_path, port, auto_restart, args):
         if _quit or not auto_restart:
             break
         _phantomjs = subprocess.Popen(cmd)
-<<<<<<< HEAD
+
         time.sleep(2)
-=======
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
+
 def main():
     cli()
 

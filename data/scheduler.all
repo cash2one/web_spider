@@ -2,11 +2,7 @@
 (ccopy_reg
 _reconstructor
 p2
-<<<<<<< HEAD
 (csspider.scheduler.scheduler
-=======
-(cscheduler.scheduler
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
 Project
 p3
 c__builtin__
@@ -16,11 +12,7 @@ NtRp5
 (dp6
 S'updatetime'
 p7
-<<<<<<< HEAD
 F1483086215.7927289
-=======
-F1482300862.033494
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
 sS'name'
 p8
 Vtest
@@ -34,18 +26,11 @@ VTODO
 p13
 sS'updatetime'
 p14
-<<<<<<< HEAD
 F1483086215.7927289
 sS'group'
 p15
 V
 sS'name'
-=======
-F1482300862.033494
-sS'group'
-p15
-NsS'name'
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
 p16
 g9
 sS'script'
@@ -66,11 +51,7 @@ I01
 sS'scheduler'
 p23
 g2
-<<<<<<< HEAD
 (csspider.scheduler.scheduler
-=======
-(cscheduler.scheduler
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
 Scheduler
 p24
 g4

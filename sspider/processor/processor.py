@@ -138,10 +138,7 @@ class Processor(object):
                 fetch = {u'fetch_type': u'phantomjs'}
                 fetch["method"] = item["method"]
                 fetch["data"] = item["data"]
-<<<<<<< HEAD
 
-=======
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
                 newtask['fetch'] = fetch
                 newtask['process'] = {}
                 newtask['project'] = project

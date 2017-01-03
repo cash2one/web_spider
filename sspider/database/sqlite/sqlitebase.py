@@ -15,10 +15,7 @@ class SQLiteMixin(object):
         pid = (os.getpid(), threading.current_thread().ident)
         if not (self.conn and pid == self.last_pid):
             self.last_pid = pid
-<<<<<<< HEAD
-            print os.path.abspath(self.path)
-=======
->>>>>>> 4f6bd53db96ef6b346bf2e3bb76b9a01e6ada01e
+
             self.conn = sqlite3.connect(self.path, isolation_level=None)
         return self.conn.cursor()
 
