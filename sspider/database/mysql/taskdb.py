@@ -1,47 +1,54 @@
-#!/usr/bin/env python
+#!/usr/bin/envutils
 # -*- encoding: utf-8 -*-
 
-
 import re
+import six
 import time
 import json
+import mysql.connector
 
-import sys,os
-DATABASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if DATABASE_DIR not in sys.path:
-    sys.path.append(DATABASE_DIR)
-
-from sqlitebase import SQLiteMixin, SplitTableMixin
+from sspider.libs import utils
 from sspider.database.base.taskdb import TaskDB as BaseTaskDB
 from sspider.database.basedb import BaseDB
+from .mysqlbase import MySQLMixin, SplitTableMixin
 
 
-class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
+class TaskDB(MySQLMixin, SplitTableMixin, BaseTaskDB, BaseDB):
     __tablename__ = 'taskdb'
-    placeholder = '?'
 
-    def __init__(self, path):
-        self.path = path
-        self.last_pid = 0
-        self.conn = None
+    def __init__(self, host='localhost', port=3306, database='taskdb',
+                 user='root', passwd=123):
+        self.database_name = database
+        self.conn = mysql.connector.connect(user=user, password=passwd,
+                                            host=host, port=port, autocommit=True)
+        if database not in [x[0] for x in self._execute('show databases')]:
+            self._execute('CREATE DATABASE %s' % self.escape(database))
+        self.conn.database = database
         self._list_project()
 
     def _create_project(self, project):
         assert re.match(r'^\w+$', project) is not None
         tablename = self._tablename(project)
-        self._execute('''CREATE TABLE IF NOT EXISTS `%s` (
-                taskid PRIMARY KEY,
-                project,
-                url, status,
-                schedule, fetch, process, track,
-                lastcrawltime, updatetime
-                )''' % tablename)
-        self._execute(
-            '''CREATE INDEX `status_%s_index` ON %s (status)'''
-            % (tablename, self.escape(tablename))
-        )
+        if tablename in [x[0] for x in self._execute('show tables')]:
+            return
+        self._execute('''CREATE TABLE IF NOT EXISTS %s (
+            `taskid` varchar(64) PRIMARY KEY,
+            `project` varchar(64),
+            `url` varchar(1024),
+            `status` int(1),
+            `schedule` BLOB,
+            `fetch` BLOB,
+            `process` BLOB,
+            `track` BLOB,
+            `lastcrawltime` double(16, 4),
+            `updatetime` double(16, 4),
+            INDEX `status_index` (`status`)
+            ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
 
     def _parse(self, data):
+        for key, value in list(six.iteritems(data)):
+            if isinstance(value, (bytearray, six.binary_type)):
+                data[key] = utils.text(value)
         for each in ('schedule', 'fetch', 'process', 'track'):
             if each in data:
                 if data[each]:
@@ -59,7 +66,7 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
     def load_tasks(self, status, project=None, fields=None):
         if project and project not in self.projects:
             return
-        where = "status = %d" % status
+        where = "`status` = %s" % self.placeholder
 
         if project:
             projects = [project, ]
@@ -68,7 +75,9 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
 
         for project in projects:
             tablename = self._tablename(project)
-            for each in self._select2dic(tablename, what=fields, where=where):
+            for each in self._select2dic(
+                    tablename, what=fields, where=where, where_values=(status,)
+            ):
                 yield self._parse(each)
 
     def get_task(self, project, taskid, fields=None):
@@ -77,17 +86,12 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
         if project not in self.projects:
             return None
         where = "`taskid` = %s" % self.placeholder
-        if project not in self.projects:
-            return None
         tablename = self._tablename(project)
-        for each in self._select2dic(tablename, what=fields, where=where, where_values=(taskid, )):
+        for each in self._select2dic(tablename, what=fields, where=where, where_values=(taskid,)):
             return self._parse(each)
         return None
 
     def status_count(self, project):
-        '''
-        return a dict
-        '''
         result = dict()
         if project not in self.projects:
             self._list_project()
@@ -95,11 +99,13 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
             return result
         tablename = self._tablename(project)
         for status, count in self._execute("SELECT `status`, count(1) FROM %s GROUP BY `status`" %
-                                           self.escape(tablename)):
+                                                   self.escape(tablename)):
             result[status] = count
         return result
 
     def insert(self, project, taskid, obj={}):
+        if project not in self.projects:
+            self._list_project()
         if project not in self.projects:
             self._create_project(project)
             self._list_project()
@@ -112,12 +118,16 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
 
     def update(self, project, taskid, obj={}, **kwargs):
         if project not in self.projects:
+            self._list_project()
+        if project not in self.projects:
             raise LookupError
         tablename = self._tablename(project)
         obj = dict(obj)
         obj.update(kwargs)
         obj['updatetime'] = time.time()
         return self._update(
-            tablename, where="`taskid` = %s" % self.placeholder, where_values=(taskid, ),
+            tablename,
+            where="`taskid` = %s" % self.placeholder,
+            where_values=(taskid,),
             **self._stringify(obj)
         )

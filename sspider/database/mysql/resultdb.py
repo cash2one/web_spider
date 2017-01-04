@@ -2,41 +2,47 @@
 # -*- encoding: utf-8 -*-
 
 import re
+import six
 import time
 import json
+import mysql.connector
 
-import sys,os
-DATABASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if DATABASE_DIR not in sys.path:
-    sys.path.append(DATABASE_DIR)
-
-from sqlitebase import SQLiteMixin, SplitTableMixin
-from sspider.database.base.taskdb import TaskDB as BaseResultDB
+from sspider.libs import utils
+from sspider.database.base.resultdb import ResultDB as BaseResultDB
 from sspider.database.basedb import BaseDB
+from .mysqlbase import MySQLMixin, SplitTableMixin
 
 
-class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
+class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
     __tablename__ = 'resultdb'
-    placeholder = '?'
 
-    def __init__(self, path):
-        self.path = path
-        self.last_pid = 0
-        self.conn = None
+    def __init__(self, host='localhost', port=3306, database='resultdb',
+                 user='root', passwd=123):
+        self.database_name = database
+        self.conn = mysql.connector.connect(user=user, password=passwd,
+                                            host=host, port=port, autocommit=True)
+        if database not in [x[0] for x in self._execute('show databases')]:
+            self._execute('CREATE DATABASE %s' % self.escape(database))
+        self.conn.database = database
         self._list_project()
 
     def _create_project(self, project):
         assert re.match(r'^\w+$', project) is not None
         tablename = self._tablename(project)
-        self._execute('''CREATE TABLE IF NOT EXISTS `%s` (
-                url PRIMARY KEY,
-                type,
-                param,
-                seed_url,
-                updatetime
-                )''' % tablename)
+        if tablename in [x[0] for x in self._execute('show tables')]:
+            return
+        self._execute('''CREATE TABLE %s (
+            `url` varchar(100) PRIMARY KEY,
+            `type` varchar(50),
+            `param` MEDIUMBLOB,
+            `seed_url` varchar(100),
+            `updatetime` double(16, 4)
+            ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
 
     def _parse(self, data):
+        for key, value in list(six.iteritems(data)):
+            if isinstance(value, (bytearray, six.binary_type)):
+                data[key] = utils.text(value)
         if 'result' in data:
             data['result'] = json.loads(data['result'])
         return data
@@ -88,5 +94,5 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         tablename = self._tablename(project)
         where = "`taskid` = %s" % self.placeholder
         for task in self._select2dic(tablename, what=fields,
-                                     where=where, where_values=(taskid, )):
+                                     where=where, where_values=(taskid,)):
             return self._parse(task)

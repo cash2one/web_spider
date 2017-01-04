@@ -10,8 +10,8 @@ if DATABASE_DIR not in sys.path:
     sys.path.append(DATABASE_DIR)
 
 from sqlitebase import SQLiteMixin
-from base.projectdb import ProjectDB as BaseProjectDB
-from basedb import BaseDB
+from sspider.database.base.projectdb import ProjectDB as BaseProjectDB
+from sspider.database.basedb import BaseDB
 
 
 class ProjectDB(SQLiteMixin, BaseProjectDB, BaseDB):

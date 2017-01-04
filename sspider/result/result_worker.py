@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-# vim: set et sw=4 ts=4 sts=4 ff=unix fenc=utf8:
-# Author: Binux<i@binux.me>
-#         http://binux.me
-# Created on 2014-10-19 15:37:46
 
 import time
 import json
@@ -31,12 +27,15 @@ class ResultWorker(object):
         if 'taskid' in task and 'project' in task and 'url' in task:
             logger.info('result %s:%s %s -> %.30r' % (
                 task['project'], task['taskid'], task['url'], result))
-            return self.resultdb.save(
-                project=task['project'],
-                taskid=task['taskid'],
-                url=task['url'],
-                result=result
-            )
+            obj = {
+                'url': result['url'],
+                'type': result['fetch'].get('method', 'link'),
+                'param': {
+                    'data': result['fetch'].get('data', {})
+                },
+                'seed_url': task['url']
+            }
+            return self.resultdb.save(project=task['project'], result=obj)
         else:
             logger.warning('result UNKNOW -> %.30r' % result)
             return
@@ -50,8 +49,10 @@ class ResultWorker(object):
 
         while not self._quit:
             try:
-                task, result = self.inqueue.get(timeout=1)
-                self.on_result(task, result)
+                result = self.inqueue.get(timeout=1)
+                for item in result:
+                    self.on_result(item[0], item[1])
+
             except Queue.Empty as e:
                 continue
             except KeyboardInterrupt:

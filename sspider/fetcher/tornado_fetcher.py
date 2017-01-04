@@ -148,7 +148,7 @@ class Fetcher(object):
 
         callback(type, task, result)
 
-        pprint(result)
+        # pprint(result)
         self.on_result(type, task, result)
         raise gen.Return(result)
 

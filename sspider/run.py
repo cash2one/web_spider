@@ -71,7 +71,7 @@ def cli(ctx, **kwargs):
 
 
     if not kwargs.get('config'):
-        print "usage: webspider.py -c test.conf"
+        print "usage: webspider.py -c sqlite.conf"
         return
 
     if not os.path.exists(kwargs['data_path']):
@@ -156,12 +156,12 @@ def all(ctx, fetcher_num, processor_num, result_worker_num, run_in):
             if threads[-1].is_alive() and not g.get('phantomjs_proxy'):
                 g['phantomjs_proxy'] = '127.0.0.1:%s' % phantomjs_config.get('port', 25555)
         time.sleep(2)
-        '''
+
         #2 启动result worker
         result_worker_config = g.get('result_worker', {})
         for i in range(result_worker_num):
             threads.append(run_in(ctx.invoke, result_worker, **result_worker_config))
-        '''
+
         #3 启动processor内容处理模块
         processor_config = g.get('processor', {})
         for i in range(processor_num):
@@ -314,7 +314,8 @@ def result_worker(ctx, get_object=False):
 
     result_worker.run()
 @cli.command()
-@click.option('--phantomjs-path', default='phantomjs', help='phantomjs path')
+@click.option('--phantomjs-path', default='/root/PycharmProjects/web-spider/sspider/fetcher/phantomjs/phantomjs',
+              help='phantomjs path')
 @click.option('--port', default=25555, help='phantomjs port')
 @click.option('--auto-restart', default=False, help='auto restart phantomjs if crashed')
 @click.argument('args', nargs=-1)
