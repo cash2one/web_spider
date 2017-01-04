@@ -522,8 +522,8 @@ class Scheduler(object):
                 "taskid": "data:,on_start",
                 "url": url
             }
-            if self.task_verify(task):
-                self.newtask_queue.put(task)
+            #if self.task_verify(task):
+            self.newtask_queue.put(task)
 
             return "ok",200
 

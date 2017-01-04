@@ -3,6 +3,7 @@
 
  2017.1.1
  */
+debugger;
 var port, server, service,
     wait_before_end = 1000,
     system = require('system'),

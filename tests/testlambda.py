@@ -15,4 +15,4 @@ import xmlrpclib as xmlrpc_client
 
 
 rpc = xmlrpc_client.ServerProxy("http://127.0.0.1:23333/", allow_none=True)
-print rpc.startproject("test", "http://www.freebuf.com/")#""http://demo.aisec.cn/demo/aisec/")
+print rpc.startproject("test", "http://www.freebuf.com")#"http://demo.aisec.cn/demo/aisec/")

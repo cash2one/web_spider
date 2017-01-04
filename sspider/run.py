@@ -155,6 +155,7 @@ def all(ctx, fetcher_num, processor_num, result_worker_num, run_in):
             time.sleep(2)
             if threads[-1].is_alive() and not g.get('phantomjs_proxy'):
                 g['phantomjs_proxy'] = '127.0.0.1:%s' % phantomjs_config.get('port', 25555)
+        time.sleep(2)
         '''
         #2 启动result worker
         result_worker_config = g.get('result_worker', {})
@@ -329,7 +330,7 @@ def phantomjs(ctx, phantomjs_path, port, auto_restart, args):
     _quit = []
     phantomjs_fetcher = os.path.join(
 
-        os.path.dirname(__file__), 'fetcher/phantomjs/phantomjs_server.js')
+        os.path.dirname(__file__), 'fetcher/phantomjs/phantomjs_server.js')#'fetcher/phantomjs/phantomjs_server.js'
     cmd = [phantomjs_path,
            # this may cause memory leak: https://github.com/ariya/phantomjs/issues/12903
            #'--load-images=false',
@@ -364,7 +365,7 @@ def phantomjs(ctx, phantomjs_path, port, auto_restart, args):
             break
         _phantomjs = subprocess.Popen(cmd)
 
-        time.sleep(2)
+
 
 def main():
     cli()

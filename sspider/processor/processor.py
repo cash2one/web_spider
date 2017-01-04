@@ -131,7 +131,7 @@ class Processor(object):
                 if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
                     continue
 
-                print item["url"]
+                #print item["url"]
                 newtask = {}
                 newtask['schedule'] = {}
 
@@ -239,6 +239,7 @@ class Processor(object):
             #一次发1000个任务，以免频繁发送任务
             for each in (ret.follows[x:x + 1000] for x in range(0, len(ret.follows), 1000)):
                 self.newtask_queue.put([utils.unicode_obj(newtask) for newtask in each])
+                self.result_queue.put([utils.unicode_obj(newtask) for newtask in each])
 
 
         return True

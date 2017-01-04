@@ -88,7 +88,7 @@ exports.open = function(page, fetch, response) {
         // during error, make sure phantom can die no matter what
         try {
             output.response = utils.prepareResponse(response, headers.getRespHeaders);
-            output.response.body = '';//utils.cleanResponseBody(page.content);
+            output.response.body = 'x';//utils.cleanResponseBody(page.content);
             output.response.details = utils.pageChanges.fetchAll();
         } catch (e) {}
 
@@ -360,7 +360,6 @@ exports.open = function(page, fetch, response) {
     page.onConfirm = function (msg) {
         return true
     };
-
 
 
     page.openUrl(url, {
