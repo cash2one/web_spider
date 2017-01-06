@@ -32,12 +32,13 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
         if tablename in [x[0] for x in self._execute('show tables')]:
             return
         self._execute('''CREATE TABLE %s (
-            `url` varchar(100) PRIMARY KEY,
-            `type` varchar(50),
-            `param` MEDIUMBLOB,
-            `seed_url` varchar(100),
-            `updatetime` double(16, 4)
-            ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
+                    `url` varchar(100) PRIMARY KEY,
+                    `type` varchar(50),
+                    `param` MEDIUMBLOB,
+                    `seed_url` varchar(100),
+                    `status` TINYINT,
+                    `updatetime` double(16, 4)
+                    ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
 
     def _parse(self, data):
         for key, value in list(six.iteritems(data)):
@@ -96,3 +97,13 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
         for task in self._select2dic(tablename, what=fields,
                                      where=where, where_values=(taskid,)):
             return self._parse(task)
+
+    def finish(self, project):
+        if project not in self.projects:
+            self._list_project()
+        if project not in self.projects:
+            return
+        tablename = self._tablename(project)
+        where = "1=1"
+        value = {"status": 0}
+        return self._update(tablename=tablename, where=where, **value)

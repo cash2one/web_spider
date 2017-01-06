@@ -29,12 +29,13 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         assert re.match(r'^\w+$', project) is not None
         tablename = self._tablename(project)
         self._execute('''CREATE TABLE IF NOT EXISTS `%s` (
-                url PRIMARY KEY,
-                type,
-                param,
-                seed_url,
-                updatetime
-                )''' % tablename)
+                        url PRIMARY KEY,
+                        type,
+                        param,
+                        seed_url,
+                        status,
+                        updatetime
+                        )''' % tablename)
 
     def _parse(self, data):
         if 'result' in data:
@@ -90,3 +91,13 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         for task in self._select2dic(tablename, what=fields,
                                      where=where, where_values=(taskid, )):
             return self._parse(task)
+
+    def finish(self, project):
+        if project not in self.projects:
+            self._list_project()
+        if project not in self.projects:
+            return
+        tablename = self._tablename(project)
+        where = "1=1"
+        value = {"status": 0}
+        return self._update(tablename=tablename, where=where, **value)

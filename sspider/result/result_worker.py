@@ -31,7 +31,7 @@ class ResultWorker(object):
                 'url': result['url'],
                 'type': result['fetch'].get('method', 'link'),
                 'param': {
-                    'data': result['fetch'].get('data', {})
+                    'data': result['fetch'].get('data', '')
                 },
                 'seed_url': task['url']
             }
