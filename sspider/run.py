@@ -314,8 +314,7 @@ def result_worker(ctx, get_object=False):
 
     result_worker.run()
 @cli.command()
-@click.option('--phantomjs-path', default='/root/PycharmProjects/web-spider/sspider/fetcher/phantomjs/phantomjs',
-              help='phantomjs path')
+@click.option('--phantomjs-path', default='phantomjs', help='phantomjs path')
 @click.option('--port', default=25555, help='phantomjs port')
 @click.option('--auto-restart', default=False, help='auto restart phantomjs if crashed')
 @click.argument('args', nargs=-1)

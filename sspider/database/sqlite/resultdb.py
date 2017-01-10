@@ -57,6 +57,7 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
             'type': result['type'],
             'param': result['param'],
             'seed_url': result['seed_url'],
+            'status': 0,
             'updatetime': time.time()
         }
         return self._replace(tablename, **self._stringify(obj))
@@ -99,5 +100,5 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
             return
         tablename = self._tablename(project)
         where = "1=1"
-        value = {"status": 0}
+        value = {"status": 1}
         return self._update(tablename=tablename, where=where, **value)

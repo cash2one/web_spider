@@ -542,6 +542,9 @@ class Fetcher(object):
                     if self.http_client.free_size() <= 0:
                         break
                     task = self.inqueue.get_nowait()
+                    if task.get('finish'):
+                        self.send_result(task=task, result=None, type=None)
+                        continue
                     #pprint(task)
                     # FIXME: decode unicode_obj should used after data selete from
                     # database, it's used here for performance

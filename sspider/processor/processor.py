@@ -256,6 +256,9 @@ class Processor(object):
         while not self._quit:
             try:
                 task, response = self.inqueue.get(timeout=1)
+                if task.get('finish'):
+                    self.result_queue.put(task)
+                    continue
                 self.on_task(task, response)
                 self._exceptions = 0
             except Queue.Empty as e:

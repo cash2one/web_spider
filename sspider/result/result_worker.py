@@ -50,6 +50,9 @@ class ResultWorker(object):
         while not self._quit:
             try:
                 result = self.inqueue.get(timeout=1)
+                if isinstance(result, dict) and result.get('finish'):
+                    self.resultdb.finish(result['finish'])
+                    continue
                 for item in result:
                     self.on_result(item[0], item[1])
 

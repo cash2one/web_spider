@@ -35,6 +35,7 @@ class Project(object):
         self.db_status = 'RUNNING'
         self.active_tasks = deque(maxlen=scheduler.ACTIVE_TASKS)
         self.task_queue = TaskQueue()
+        self._send_finished_event_wait = 0
 
         self.md5sum = None
 
@@ -272,8 +273,24 @@ class Scheduler(object):
 
                 taskids.append((project.name, taskid))
                 cnt += 1
+                project_cnt += 1
 
             cnt_dict[project.name] = project_cnt
+
+            if project_cnt:
+                project._selected_tasks = True
+                project._send_finished_event_wait = 0
+
+            # check and send finished event to project
+            if not project_cnt and len(task_queue) == 0 and project._selected_tasks:
+                # wait for self.FAIL_PAUSE_NUM steps to make sure all tasks in queue have been processed
+                if project._send_finished_event_wait < self.FAIL_PAUSE_NUM:
+                    project._send_finished_event_wait += 1
+                else:
+                    project._selected_tasks = False
+                    project._send_finished_event_wait = 0
+                    task = {'finish': project.name}
+                    self.send_task(task)
 
         for project, taskid in taskids:
             self._load_put_task(project, taskid)
