@@ -82,15 +82,15 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         for count, in self._execute("SELECT count(1) FROM %s" % self.escape(tablename)):
             return count
 
-    def get(self, project, taskid, fields=None):
+    def get(self, project, url, fields=None):
         if project not in self.projects:
             self._list_project()
         if project not in self.projects:
             return
         tablename = self._tablename(project)
-        where = "`taskid` = %s" % self.placeholder
+        where = "`url` = %s" % self.placeholder
         for task in self._select2dic(tablename, what=fields,
-                                     where=where, where_values=(taskid, )):
+                                     where=where, where_values=(url,)):
             return self._parse(task)
 
     def finish(self, project):

@@ -27,11 +27,19 @@ class ResultWorker(object):
         if 'taskid' in task and 'project' in task and 'url' in task:
             logger.info('result %s:%s %s -> %.30r' % (
                 task['project'], task['taskid'], task['url'], result))
+
+            data_str = result['fetch'].get('data', '')
+            data_dict = {}
+
+            if data_str:
+                for i in data_str.split('&'):
+                    data_dict[i.split('=')[0]] = i.split('=')[1]
+
             obj = {
                 'url': result['url'],
                 'type': result['fetch'].get('method', 'link'),
                 'param': {
-                    'data': result['fetch'].get('data', '')
+                    'data': data_dict
                 },
                 'seed_url': task['url']
             }

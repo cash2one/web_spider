@@ -19,11 +19,11 @@ if ROOT_DIR not in sys.path:
 from libs.url import (
     quote_chinese, _build_url, _encode_params,
     _encode_multipart_formdata, curl_to_arguments)
-from libs import utils
-from libs.log import LogFormatter
-from libs.utils import pretty_unicode, hide_me
-from libs.response import rebuild_response
-from libs.utils import md5string, timeout, get_domain_from_url
+from sspider.libs import utils
+from sspider.libs.log import LogFormatter
+from sspider.libs.utils import pretty_unicode, hide_me
+from sspider.libs.response import rebuild_response
+from sspider.libs.utils import md5string, timeout, get_domain_from_url
 from project_module import ProjectManager, ProjectFinder
 
 

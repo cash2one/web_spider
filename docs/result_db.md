@@ -8,9 +8,9 @@
 #### 表结构
 | url | type | param | seed_url | status | updatatime |
 |:---:|:----:|:-----:|:--------:|:------:|:----------:|
-| 'www.baidu.com/1/' | 'get' | {'data': 'string'} | 'www.baidu.com' | 0 |  datatime |
-| 'www.baidu.com/2/' | 'post' | {'data': 'string'} | 'www.baidu.com' | 0 |  datatime |
-| 'www.baidu.com/2/' | 'link' | {'data': ' '} | 'www.baidu.com' | 0 |  datatime |
+| 'www.baidu.com/1/' | 'get' | {'data': {'arg1': 'value1'}} | 'www.baidu.com' | 0 |  datatime |
+| 'www.baidu.com/2/' | 'post' | {'data': {'arg1': 'value1'}} | 'www.baidu.com' | 0 |  datatime |
+| 'www.baidu.com/2/' | 'link' | {'data': {}} | 'www.baidu.com' | 0 |  datatime |
 
 #### 字段说明
 - *url*：爬虫结果url
@@ -18,7 +18,7 @@
   - get
   - post
   - link：无参数的链接
-- *param*：url的参数，所有参数以string存储于data中
+- *param*：url的参数，所有参数以字典存储于data中
 - *seed_url*：url的父级url
 - *status*：项目状态
   - 0：未完成
