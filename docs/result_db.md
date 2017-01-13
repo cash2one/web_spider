@@ -13,14 +13,14 @@
 | 'www.baidu.com/2/' | 'link' | {'data': {}} | 'www.baidu.com' | 0 |  datatime |
 
 #### 字段说明
-- *url*：爬虫结果url
-- *type*：url类型
+- *url*：*[ varchar(1024) ]* 爬虫结果url
+- *type*：*[ varchar(64) ]* url类型
   - get
   - post
   - link：无参数的链接
-- *param*：url的参数，所有参数以字典存储于data中
-- *seed_url*：url的父级url
-- *status*：项目状态
+- *param*：*[ MEDIUMBLOB ]* url的参数，所有参数以字典存储于data中
+- *seed_url*：*[ varchar(1024) ]* url的父级url
+- *status*：*[ TINYINT ]* 项目状态
   - 0：未完成
   - 1：已完成
-- *updatetime*：结果更新时间
+- *updatetime*：*[ double(16, 4) ]* 结果更新时间

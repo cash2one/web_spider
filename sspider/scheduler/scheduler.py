@@ -35,6 +35,7 @@ class Project(object):
         self.db_status = 'RUNNING'
         self.active_tasks = deque(maxlen=scheduler.ACTIVE_TASKS)
         self.task_queue = TaskQueue()
+        self._selected_tasks = False
         self._send_finished_event_wait = 0
 
         self.md5sum = None

@@ -32,10 +32,12 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
         if tablename in [x[0] for x in self._execute('show tables')]:
             return
         self._execute('''CREATE TABLE %s (
-                    `url` varchar(100) PRIMARY KEY,
-                    `type` varchar(50),
+                    `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    `url_hash` varchar(64) NOT NULL UNIQUE,
+                    `url` varchar(1024) NOT NULL,
+                    `type` varchar(64),
                     `param` MEDIUMBLOB,
-                    `seed_url` varchar(100),
+                    `seed_url` varchar(1024),
                     `status` TINYINT,
                     `updatetime` double(16, 4)
                     ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
@@ -59,6 +61,7 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
             self._create_project(project)
             self._list_project()
         obj = {
+            'url_hash': utils.md5string(result['url']),
             'url': result['url'],
             'type': result['type'],
             'param': result['param'],
