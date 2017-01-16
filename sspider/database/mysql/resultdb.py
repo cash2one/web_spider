@@ -3,9 +3,9 @@
 
 import re
 import six
-import time
 import json
 import mysql.connector
+from datetime import datetime
 
 from sspider.libs import utils
 from sspider.database.base.resultdb import ResultDB as BaseResultDB
@@ -39,7 +39,7 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
                     `param` MEDIUMBLOB,
                     `seed_url` varchar(1024),
                     `status` TINYINT,
-                    `updatetime` double(16, 4)
+                    `updatetime` DATETIME
                     ) ENGINE=InnoDB CHARSET=utf8''' % self.escape(tablename))
 
     def _parse(self, data):
@@ -67,7 +67,7 @@ class ResultDB(MySQLMixin, SplitTableMixin, BaseResultDB, BaseDB):
             'param': result['param'],
             'seed_url': result['seed_url'],
             'status': 0,
-            'updatetime': time.time()
+            'updatetime': datetime.now()
         }
         return self._replace(tablename, **self._stringify(obj))
 
