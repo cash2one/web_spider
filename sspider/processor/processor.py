@@ -19,11 +19,11 @@ if ROOT_DIR not in sys.path:
 from libs.url import (
     quote_chinese, _build_url, _encode_params,
     _encode_multipart_formdata, curl_to_arguments)
-from sspider.libs import utils
-from sspider.libs.log import LogFormatter
-from sspider.libs.utils import pretty_unicode, hide_me
-from sspider.libs.response import rebuild_response
-from sspider.libs.utils import md5string, timeout, get_domain_from_url
+from libs import utils
+from libs.log import LogFormatter
+from libs.utils import pretty_unicode, hide_me
+from libs.response import rebuild_response
+from libs.utils import md5string, timeout, get_domain_from_url
 from project_module import ProjectManager, ProjectFinder
 
 
@@ -113,65 +113,83 @@ class Processor(object):
     process_fields = ('callback', 'process_time_limit')
 
     def _get_follows(self, task, content):
-        project = task['project']
         tasks = []
+        try:
+            project = task['project']
+            if not isinstance(content, dict):
+                return []
+            if not content.has_key("response"):
+                return []
+            if not content["response"].has_key("details"):
+                return []
+            # 提取ajax
+            if content["response"]["details"].has_key('ajax'):
+                ajax = content["response"]["details"]["ajax"]
+                for item in ajax:
+                    # 只爬取设定的网站
+                    if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
+                        continue
 
-        if not isinstance(content, dict):
-            return []
-        if not content.has_key("response"):
-            return []
-        if not content["response"].has_key("details"):
-            return []
+                    # print item["url"]
+                    newtask = {}
+                    newtask['schedule'] = {}
 
-        #提取表单
-        if content["response"]["details"].has_key("forms"):
-            forms = content["response"]["details"]["forms"]
-            for item in forms:
+                    fetch = {u'fetch_type': u'phantomjs'}
+                    fetch["method"] = item["method"]
+                    fetch["data"] = item["data"]
+
+                    newtask['fetch'] = fetch
+                    newtask['process'] = {}
+                    newtask['project'] = project
+                    newtask['url'] = item["url"]
+                    newtask['taskid'] = self.get_taskid(newtask)
+                    tasks.append(newtask)
+            # 提取表单
+            if content["response"]["details"].has_key("forms"):
+                forms = content["response"]["details"]["forms"]
+                for item in forms:
+                    # 只爬取设定的网站
+                    if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
+                        continue
+
+                    # print item["url"]
+                    newtask = {}
+                    newtask['schedule'] = {}
+
+                    fetch = {u'fetch_type': u'phantomjs'}
+                    fetch["method"] = item["method"]
+                    fetch["data"] = item["data"]
+
+                    newtask['fetch'] = fetch
+                    newtask['process'] = {}
+                    newtask['project'] = project
+                    newtask['url'] = item["url"]
+                    newtask['taskid'] = self.get_taskid(newtask)
+                    tasks.append(newtask)
+            # 提取链接
+            for item in content["response"]["details"]["links"]:
                 # 只爬取设定的网站
                 if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
                     continue
-
-                #print item["url"]
                 newtask = {}
-                newtask['schedule'] = {}
+                url = item["url"]
+                # print url
+                #url = quote_chinese(_build_url(url.strip()))
 
+                schedule = {}
+                newtask['schedule'] = schedule
                 fetch = {u'fetch_type': u'phantomjs'}
-                fetch["method"] = item["method"]
-                fetch["data"] = item["data"]
-
                 newtask['fetch'] = fetch
-                newtask['process'] = {}
+
+                process = {}
+                newtask['process'] = process
                 newtask['project'] = project
-                newtask['url'] = item["url"]
+                newtask['url'] = url
                 newtask['taskid'] = self.get_taskid(newtask)
+
                 tasks.append(newtask)
-        #提取链接
-        for item in content["response"]["details"]["links"]:
-            #只爬取设定的网站
-            if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
-                continue
-            newtask = {}
-            url = item["url"]
-            # print url
-            #url = quote_chinese(_build_url(url.strip()))
-
-            schedule = {}
-
-            newtask['schedule'] = schedule
-
-            fetch = {u'fetch_type': u'phantomjs'}
-
-            newtask['fetch'] = fetch
-
-            process = {}
-
-            newtask['process'] = process
-
-            newtask['project'] = project
-            newtask['url'] = url
-            newtask['taskid'] = self.get_taskid(newtask)
-
-            tasks.append(newtask)
+        except Exception, e:
+            print e
         return tasks
 
     def get_taskid(self, task):
@@ -240,7 +258,6 @@ class Processor(object):
             for each in (ret.follows[x:x + 1000] for x in range(0, len(ret.follows), 1000)):
                 self.newtask_queue.put([utils.unicode_obj(newtask) for newtask in each])
                 self.result_queue.put([(task, utils.unicode_obj(newtask)) for newtask in each])
-                # self.result_queue.put([utils.unicode_obj(newtask) for newtask in each])
 
 
         return True
@@ -256,9 +273,6 @@ class Processor(object):
         while not self._quit:
             try:
                 task, response = self.inqueue.get(timeout=1)
-                if task.get('finish'):
-                    self.result_queue.put(task)
-                    continue
                 self.on_task(task, response)
                 self._exceptions = 0
             except Queue.Empty as e:

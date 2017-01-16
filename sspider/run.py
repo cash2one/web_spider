@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import click, time
+import click, time, os
 from libs.constant import *
 
 __title__ = ""
@@ -314,7 +314,7 @@ def result_worker(ctx, get_object=False):
 
     result_worker.run()
 @cli.command()
-@click.option('--phantomjs-path', default='phantomjs', help='phantomjs path')
+@click.option('--phantomjs-path', default='default_phantomjs2.1.1', help='phantomjs path')
 @click.option('--port', default=25555, help='phantomjs port')
 @click.option('--auto-restart', default=False, help='auto restart phantomjs if crashed')
 @click.argument('args', nargs=-1)
@@ -328,16 +328,18 @@ def phantomjs(ctx, phantomjs_path, port, auto_restart, args):
     import subprocess
     g = ctx.obj
     _quit = []
-    phantomjs_fetcher = os.path.join(
-
-        os.path.dirname(__file__), 'fetcher/phantomjs/phantomjs_server.js')#'fetcher/phantomjs/phantomjs_server.js'
+    phantomjs_server = os.path.join(os.path.dirname(__file__),
+                                    'fetcher/phantomjs/phantomjs_server.js')  # 'fetcher/phantomjs/phantomjs_server.js'
+    # 使用自带phantomjs
+    if phantomjs_path == "default_phantomjs2.1.1":
+        phantomjs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../bin/phantomjs'))
     cmd = [phantomjs_path,
            # this may cause memory leak: https://github.com/ariya/phantomjs/issues/12903
-           #'--load-images=false',
-           #'--remote-debugger-port=9000',
-
+           # '--load-images=false',
+           # '--remote-debugger-port=9000',
+           # "--debug=yes",
            '--ssl-protocol=any',
-           '--disk-cache=true'] + list(args or []) + [phantomjs_fetcher, str(port)]
+           '--disk-cache=true'] + list(args or []) + [phantomjs_server, str(port)]
 
     try:
         _phantomjs = subprocess.Popen(cmd)

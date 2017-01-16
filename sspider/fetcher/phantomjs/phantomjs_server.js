@@ -1,11 +1,10 @@
 /*
- phantomjs 代理服务器，返回被渲染之后的html
+ phantomjs 代理服务器，渲染并提取url
 
  2017.1.1
  */
-debugger;
+var cn = 0;
 var port, server, service,
-    wait_before_end = 1000,
     system = require('system'),
     webpage = require('webpage'),
     render = require('./render.js');
@@ -17,6 +16,9 @@ if (system.args.length !== 2)
 }
 else
 {
+    cn = cn + 1;
+    console.log("!!!!!!!!!!!!!!!" + cn);
+
     port = system.args[1];
     server = require('webserver').create();
     //console.debug = function(){};
@@ -43,14 +45,6 @@ else
                 return;
             }
 
-            var first_response = null,
-                finished = false,
-                page_loaded = false,
-                start_time = Date.now(),
-                end_time = null,
-                script_executed = false,
-                script_result = null;
-
             var fetch = JSON.parse(request.postRaw);
 
             //console.debug(JSON.stringify(fetch, null, 2));
@@ -58,7 +52,7 @@ else
             // create and set page
             var page = webpage.create();
             page.onConsoleMessage = function(msg) {
-                console.log('console: ' + msg);
+                console.log('web console: ' + msg);
             };
             page.viewportSize = {
                 width: fetch.js_viewport_width || 1024,
@@ -74,7 +68,7 @@ else
             }
             else
             {
-                page.settings.userAgent = "sspider0.1";
+                page.settings.userAgent = "chspider0.1";
             }
             // this may cause memory leak: https://github.com/ariya/phantomjs/issues/12903
             page.settings.loadImages = fetch.load_images === undefined ? true : fetch.load_images;

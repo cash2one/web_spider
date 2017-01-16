@@ -10,6 +10,7 @@ DATABASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if DATABASE_DIR not in sys.path:
     sys.path.append(DATABASE_DIR)
 
+from sspider.libs import utils
 from sqlitebase import SQLiteMixin, SplitTableMixin
 from sspider.database.base.taskdb import TaskDB as BaseResultDB
 from sspider.database.basedb import BaseDB
@@ -29,7 +30,9 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         assert re.match(r'^\w+$', project) is not None
         tablename = self._tablename(project)
         self._execute('''CREATE TABLE IF NOT EXISTS `%s` (
-                        url PRIMARY KEY,
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        url_hash NOT NULL UNIQUE,
+                        url,
                         type,
                         param,
                         seed_url,
@@ -53,6 +56,7 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
             self._create_project(project)
             self._list_project()
         obj = {
+            'url_hash': utils.md5string(result['url']),
             'url': result['url'],
             'type': result['type'],
             'param': result['param'],

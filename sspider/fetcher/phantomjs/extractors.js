@@ -11,7 +11,7 @@ function phantomCallback(action, data) {
     if (window.callPhantom) {
         data = data || {};
         data.action = action;
-        window.callPhantom(data);
+        window.callPhantom(data);//page.onCallback
     }
 }
 
@@ -21,7 +21,7 @@ window.setTimeout = function(f, t){return phantomCallback('waitTimer', {timeout:
 window.setInterval = function(f, t){return phantomCallback('waitTimer', {timeout:t}) || _gryffin_setInterval.call(this, f, t)};
 
 
-// Derived from casperjs
+// 执行模拟事件
 function triggerMouseEvent(el, type) {
 
     try {
@@ -83,6 +83,7 @@ jsLinks = (function(){
         function getJsLink(element) {
             jsLinkEvents.forEach(function(evt){
                 element['on' + evt] && jsLinks.add(evt, element, 'dom0');
+
             });
         }
         getJsLink(el);
@@ -108,7 +109,7 @@ jsLinks = (function(){
             } else {
                 jsLinkCaptured[key] = {
                     'key': key,
-                    'keyChain': function() {
+                    'keyChain': function() {//key链
                         var trace = [], element = this;
                         do {
                             trace.push(element.key);

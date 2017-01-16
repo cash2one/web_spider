@@ -1,63 +1,63 @@
-/** 
-  * Copyright 2015, Yahoo Inc. All rights reserved.
-  * Use of this source code is governed by a BSD-style
-  * license that can be found in the LICENSE file.
-  *
-  * @author Adon adon@yahoo-inc.com
-  * @desc this module exposes more usable events, and a better event handling logic
-  *
-  *  Event Flow:
-  * ===================
-  * onNavigationRequested
-  * onResourceRequested
-  * onNavigationRequested + onResourceRequested -> onNavigate, onMainFrameNavigate, onMainFramePreRedirection, onChildFrameNavigate
-  * onLoadStarted
-  *
-  * onResourceReceived 
-  * onResourceReceived + mainFrame -> onMainFrameResourceReceived
-  * [onResourceTimeout/onResourceError] + mainFrame -> onMainFrameError, onMainFrameResourceError
-  *
-  * onInitialized
-  * 
-  * onMainFrameNavigationsEnded
-  * 
-  * onSubResourceRequested
-  * [onMainFramePostRedirection]
-  *
-  * onLoadFinished
-  * onLoadFinished + status=='success' -> onMainFrameLoadSuccess
-  * onLoadFinished + status=='fail' -> onMainFrameLoadFailed, onMainFrameError
-  *
-  * [onMainFrameLoadSuccess] + steadyLogic() -> onMainFrameSteady
+/**
+ * Copyright 2015, Yahoo Inc. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
+ *
+ * @author Adon adon@yahoo-inc.com
+ * @desc this module exposes more usable events, and a better event handling logic
+ *
+ *  Event Flow:
+ * ===================
+ * onNavigationRequested
+ * onResourceRequested
+ * onNavigationRequested + onResourceRequested -> onNavigate, onMainFrameNavigate, onMainFramePreRedirection, onChildFrameNavigate
+ * onLoadStarted
+ *
+ * onResourceReceived
+ * onResourceReceived + mainFrame -> onMainFrameResourceReceived
+ * [onResourceTimeout/onResourceError] + mainFrame -> onMainFrameError, onMainFrameResourceError
+ *
+ * onInitialized
+ *
+ * onMainFrameNavigationsEnded
+ *
+ * onSubResourceRequested
+ * [onMainFramePostRedirection]
+ *
+ * onLoadFinished
+ * onLoadFinished + status=='success' -> onMainFrameLoadSuccess
+ * onLoadFinished + status=='fail' -> onMainFrameLoadFailed, onMainFrameError
+ *
+ * [onMainFrameLoadSuccess] + steadyLogic() -> onMainFrameSteady
 
-ResourceError Codes
-# errorMessage[1] = "Connection Refused Error";
-# errorMessage[2] = "RemoteHost Closed Error";
-# errorMessage[3] = "Host Not Found Error";
-# errorMessage[4] = "Timeout Error";
-# errorMessage[5] = "Operation Canceled Error";
-# errorMessage[6] = "Ssl Handshake Failed Error";
-# errorMessage[7] = "Temporary Network Failure Error";
-# errorMessage[8] = "Network Session Failed Error";
-# errorMessage[9] = "Background Request Not Allowed Error";
-# errorMessage[99] = "Unknown Network Error";
-# errorMessage[101] = "ProxyConnectionRefusedError";
-# errorMessage[102] = "ProxyConnectionClosedError";
-# errorMessage[103] = "ProxyNotFoundError";
-# errorMessage[104] = "ProxyTimeoutError";
-# errorMessage[105] = "ProxyAuthenticationRequiredError";
-# errorMessage[199] = "UnknownProxyError";
-# errorMessage[201] = "ContentAccessDenied";
-# errorMessage[202] = "ContentOperationNotPermittedError";
-# errorMessage[203] = "ContentNotFoundError";
-# errorMessage[204] = "AuthenticationRequiredError";
-# errorMessage[205] = "ContentReSendError";
-# errorMessage[299] = "UnknownContentError";
-# errorMessage[301] = "ProtocolUnknownError";  // after networkRequest.abort()
-# errorMessage[302] = "ProtocolInvalidOperationError";
-# errorMessage[399] = "ProtocolFailure";
+ ResourceError Codes
+ # errorMessage[1] = "Connection Refused Error";
+ # errorMessage[2] = "RemoteHost Closed Error";
+ # errorMessage[3] = "Host Not Found Error";
+ # errorMessage[4] = "Timeout Error";
+ # errorMessage[5] = "Operation Canceled Error";
+ # errorMessage[6] = "Ssl Handshake Failed Error";
+ # errorMessage[7] = "Temporary Network Failure Error";
+ # errorMessage[8] = "Network Session Failed Error";
+ # errorMessage[9] = "Background Request Not Allowed Error";
+ # errorMessage[99] = "Unknown Network Error";
+ # errorMessage[101] = "ProxyConnectionRefusedError";
+ # errorMessage[102] = "ProxyConnectionClosedError";
+ # errorMessage[103] = "ProxyNotFoundError";
+ # errorMessage[104] = "ProxyTimeoutError";
+ # errorMessage[105] = "ProxyAuthenticationRequiredError";
+ # errorMessage[199] = "UnknownProxyError";
+ # errorMessage[201] = "ContentAccessDenied";
+ # errorMessage[202] = "ContentOperationNotPermittedError";
+ # errorMessage[203] = "ContentNotFoundError";
+ # errorMessage[204] = "AuthenticationRequiredError";
+ # errorMessage[205] = "ContentReSendError";
+ # errorMessage[299] = "UnknownContentError";
+ # errorMessage[301] = "ProtocolUnknownError";  // after networkRequest.abort()
+ # errorMessage[302] = "ProtocolInvalidOperationError";
+ # errorMessage[399] = "ProtocolFailure";
 
-*/
+ */
 
 exports.init = function(phantom, page) {
 
@@ -71,8 +71,8 @@ exports.init = function(phantom, page) {
     // patch response.redirectURL to take the URL (can be relative) in Location header 
     function patchRedirectURL(response) {
         // we honor the location header only if response.status = 3xx
-        !response.redirectURL && response.status 
-        && response.status >= 300 && response.status < 400 
+        !response.redirectURL && response.status
+        && response.status >= 300 && response.status < 400
         && response.headers && response.headers.some(function(h){
             if (h.name.toLowerCase() == 'location') {
                 response.redirectURL = h.value;
@@ -85,7 +85,9 @@ exports.init = function(phantom, page) {
     function invokeListeners(eventName) {
         // copy arguments to a new array, and removes the first element
         var i = 0, key, args = [], handler;
+
         for (key in arguments)
+            //console.log(arguments[key]);
             args[i++] = arguments[key];
         args.shift();
 
@@ -100,14 +102,14 @@ exports.init = function(phantom, page) {
             // disable executing any more event handlers when an error was once thrown
             if (mainFrameStatus.error)
                 return;
-            
+
             // (eventName == 'onCallback') ? console.log(JSON.stringify(arguments[0])) : console.log('debug: ' + eventName + ' ' + (/^onSteady-/.test(eventName) ? arguments[0] + ' ' + JSON.stringify(mainFrameNetwork.outstanding) : arguments[0]&&arguments[0].url));
             // mainFrameStatus.externalError && console.log('extern:' + JSON.stringify(mainFrameStatus.externalError));
 
             // if an externalError was ever raised, instead of invoking the following events, we raise an onMainFrameError
             if (mainFrameStatus.externalError
-                    && ['onMainFrameResourceReceived', 'onLoadStarted', 'onInitialized', 
-                        'onLoadFinished', 'onMainFrameLoadSuccess', 'onMainFrameSteady'].indexOf(eventName) !== -1) {
+                && ['onMainFrameResourceReceived', 'onLoadStarted', 'onInitialized',
+                    'onLoadFinished', 'onMainFrameLoadSuccess', 'onMainFrameSteady'].indexOf(eventName) !== -1) {
                 var response = mainFrameStatus.response || {};
                 response.url = response.url || mainFrameStatus.request.url;
                 response.errorCode = mainFrameStatus.externalError.errorCode;
@@ -118,9 +120,9 @@ exports.init = function(phantom, page) {
 
             var eventCallbackList = callbackList[eventName];
             if (eventCallbackList) {
-                for (var i = 0, _callback; _callback = eventCallbackList[i]; i++) 
+                for (var i = 0, _callback; _callback = eventCallbackList[i]; i++)
                     if (_callback.apply(this, arguments) === false)
-                        eventCallbackList.splice(i--, 1);
+                        eventCallbackList.splice(i--, 1);//删除
 
                 if (eventCallbackList.length === 0)
                     page[eventName] = null;
@@ -156,8 +158,15 @@ exports.init = function(phantom, page) {
     // resourceDetails['req-N'] may have {req, actions, aborted, resp, err}
     addListener('ResourceRequested', function(arg0, arg1){
         var resId = 'res' + arg0.id;
-//console.log("++11++++++++++++++++"+arg0.url);
+
+       // console.log(JSON.stringify(arg0["postData"]));
+
         resourceDetails[resId] = {'req': arg0, 'actions': arg1};
+        //console.log(resId);
+
+        //console.log(JSON.stringify(r));
+        //console.log(resourceDetails[resId]["req"]["url"]);
+
     });
     addListener('ResourceReceived', function(arg0){
         var resId = 'res' + arg0.id, resObj = resourceDetails[resId];
@@ -169,7 +178,7 @@ exports.init = function(phantom, page) {
             arg0.errorString = resObj.err.errorString;
             resObj.aborted && (arg0.aborted = resObj.aborted);
 
-            arg0.url = arg0.url || resObj.req.url; 
+            arg0.url = arg0.url || resObj.req.url;
         }
         patchRedirectURL(arg0);
         resObj.resp = arg0;
@@ -178,7 +187,7 @@ exports.init = function(phantom, page) {
     addListener('ResourceError', function(arg0){
         var resId = 'res' + arg0.id, resObj = resourceDetails[resId];
         // Upon abortion, url is stripped, resulting in protocol error (301)
-        if (arg0.errorCode === 301 && arg0.url === '') 
+        if (arg0.errorCode === 301 && arg0.url === '')
             resObj.aborted = arg0.aborted = true;
         resObj.resp = resObj.err = arg0;
     });
@@ -202,7 +211,7 @@ exports.init = function(phantom, page) {
         // 4000ms based on stats concerning max time users'd normally expect, as suggested by @albertyu
         timeout = parseInt(timeout || 4000);
         mainFrameNetwork.maxTimeout = timeout;
-        
+
         mainFrameNetwork.minSteadyTimer = setTimeout(function(){
             invokeListeners('onSteady-ready', 'minSteadyTimer');
         }, Math.min(300, timeout/10));
@@ -250,15 +259,15 @@ exports.init = function(phantom, page) {
     })
     // introduce a reason to wait setTimeout/Interval for 'timeout' ms once
     addListener('Steady-waitTimer', function(timeout){
-    	// directly ignore timeout longer than maxTimeout
-    	function readyToWait() {
-    		return mainFrameNetwork.maxTimeout && timeout < mainFrameNetwork.maxTimeout;
-    	}
+        // directly ignore timeout longer than maxTimeout
+        function readyToWait() {
+            return mainFrameNetwork.maxTimeout && timeout < mainFrameNetwork.maxTimeout;
+        }
 
         var reason = ['timer', timerCounter++, timeout].join('-');
         if (readyToWait())
             invokeListeners('onSteady-wait', reason);
-        else 
+        else
             addListener('MainFrameSteady', function(){
                 readyToWait() && invokeListeners('onSteady-wait', reason);
                 return false;
@@ -267,7 +276,7 @@ exports.init = function(phantom, page) {
             readyToWait() && invokeListeners('onSteady-ready', reason);
         }, timeout || 1);
     })
-    
+
 
     // LoadStarted fires only for mainFrame
     addListener('LoadStarted', function(){
@@ -282,7 +291,7 @@ exports.init = function(phantom, page) {
     addListener('NavigationRequested', function(url, type, willNavigate, fromMainFrame) {
         if (!url || url === 'about:blank' || !willNavigate)
             return;
-	
+
         addListener('ResourceRequested', function(requestData, networkRequest) {
 //console.log('+++++++++++++++++++++++++++++++++++++: ' + requestData.url);
             // traceback if such URL is recently recorded as the navigation
@@ -299,7 +308,7 @@ exports.init = function(phantom, page) {
 
                 invokeListeners('onNavigate', requestData, networkRequest, fromMainFrame, type);
                 invokeListeners((fromMainFrame ? 'onMainFrameNavigate' : 'onChildFrameNavigate'),
-                                requestData, networkRequest, type);
+                    requestData, networkRequest, type);
 
                 return false;
             }
@@ -338,7 +347,7 @@ exports.init = function(phantom, page) {
         // prepare a new mainFrameStatus
         mainFrameStatus = {'requested': true, 'request': requestData};
         if (mainFrameStatusBackup.requested)
-        	mainFrameStatus.lastBackup = mainFrameStatusBackup;
+            mainFrameStatus.lastBackup = mainFrameStatusBackup;
 
         // expose the following customized events:
         //  - onMainFrameNavigationsEnded: fired once when the MainFrame has no more redirections
@@ -353,13 +362,13 @@ exports.init = function(phantom, page) {
                 invokeListeners('onMainFrameResourceReceived', response);
 
                 if (mainFrameStatus.lastBackup)
-                	mainFrameStatus = mainFrameStatus.lastBackup;
+                    mainFrameStatus = mainFrameStatus.lastBackup;
                 else
-                	mainFrameStatus.response = response;
+                    mainFrameStatus.response = response;
 
                 if (!mainFrameStatus.navigationsEnded) {
-                	mainFrameStatus.navigationsEnded = true;
-                	invokeListeners('onMainFrameNavigationsEnded', mainFrameStatus.response);
+                    mainFrameStatus.navigationsEnded = true;
+                    invokeListeners('onMainFrameNavigationsEnded', mainFrameStatus.response);
                 }
                 return false;
             }
@@ -372,18 +381,18 @@ exports.init = function(phantom, page) {
                 invokeListeners('onMainFrameError', response);
                 return false;
             }
-            
+
             invokeListeners('onMainFrameResourceReceived', response);
 
             // the mainFrame's response[stage=start] that has no further redirections 
-            if (!mainFrameStatus.navigationsEnded 
-                    && (response.status < 300 || !response.redirectURL)) {
+            if (!mainFrameStatus.navigationsEnded
+                && (response.status < 300 || !response.redirectURL)) {
                 mainFrameStatus.navigationsEnded = true;
                 invokeListeners('onMainFrameNavigationsEnded', response);
 
                 mainFrameStatus.destResponse = response;
 
-            // the corresponding mainFrame's response[stage=end]
+                // the corresponding mainFrame's response[stage=end]
             } else {
                 delete mainFrameStatus.destResponse;
                 // this is important to deactivate this listener once the main response is downloaded
@@ -395,18 +404,18 @@ exports.init = function(phantom, page) {
 
     addListener('LoadFinished', function(status) {
         var response = mainFrameStatus.response || {'url': url};
-        
+
         mainFrameStatus.loadFinished = true;
-        if (status == 'success' 
-                || (page.content && page.content !== '<html><head></head><body></body></html>')
-                || (response.status && response.status >= 300 && response.status < 400)) {
+        if (status == 'success'
+            || (page.content && page.content !== '<html><head></head><body></body></html>')
+            || (response.status && response.status >= 300 && response.status < 400)) {
             mainFrameStatus.loadSuccess = true;
             invokeListeners('onMainFrameLoadSuccess', response);
         } else {
             mainFrameStatus.loadFailed = true;
             response.errorCode = response.errorCode || 1002;
             response.errorString = response.errorString || 'Load Failed Error (from disallowed domains)';
-            
+
             invokeListeners('onMainFrameLoadError', response);
             invokeListeners('onMainFrameError', response);
         }

@@ -3,7 +3,6 @@
   * Use of this source code is governed by a BSD-style
   * license that can be found in the LICENSE file.
   *
-  
 */
 
 var re_hostname = /^(?:https?|ftp):\/\/([^:\/\?]+)/i,
@@ -61,7 +60,7 @@ exports.pageChanges = (function() {
 	}
 })();
 
-var JSONSignature = '==lXlKfYWch7H9VdJgPCmJ==';
+var JSONSignature = 'enjoy';
 
 exports.printJSON = function(type, output) {
 	output['msgType'] = type;
