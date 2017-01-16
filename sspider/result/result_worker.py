@@ -20,13 +20,13 @@ class ResultWorker(object):
         self.inqueue = inqueue
         self._quit = False
 
-    def on_result(self, task, result):
+    def on_result(self, result):
         '''Called every result'''
         if not result:
             return
-        if 'taskid' in task and 'project' in task and 'url' in task:
+        if 'taskid' in result and 'project' in result and 'url' in result:
             logger.info('result %s:%s %s -> %.30r' % (
-                task['project'], task['taskid'], task['url'], result))
+                result['project'], result['taskid'], result['url'], result))
 
             data_str = result['fetch'].get('data', '')
             data_dict = {}
@@ -41,9 +41,9 @@ class ResultWorker(object):
                 'param': {
                     'data': data_dict
                 },
-                'seed_url': task['url']
+                'seed_url': result['seed_url']
             }
-            return self.resultdb.save(project=task['project'], result=obj)
+            return self.resultdb.save(project=result['project'], result=obj)
         else:
             logger.warning('result UNKNOW -> %.30r' % result)
             return
@@ -62,7 +62,7 @@ class ResultWorker(object):
                     self.resultdb.finish(result['finish'])
                     continue
                 for item in result:
-                    self.on_result(item[0], item[1])
+                    self.on_result(item)
 
             except Queue.Empty as e:
                 continue
@@ -80,17 +80,18 @@ class ResultWorker(object):
 
 class OneResultWorker(ResultWorker):
     '''Result Worker for one mode, write results to stdout'''
-    def on_result(self, task, result):
+
+    def on_result(self, result):
         '''Called every result'''
         if not result:
             return
-        if 'taskid' in task and 'project' in task and 'url' in task:
+        if 'taskid' in result and 'project' in result and 'url' in result:
             logger.info('result %s:%s %s -> %.30r' % (
-                task['project'], task['taskid'], task['url'], result))
+                result['project'], result['taskid'], result['url'], result))
             print(json.dumps({
-                'taskid': task['taskid'],
-                'project': task['project'],
-                'url': task['url'],
+                'taskid': result['taskid'],
+                'project': result['project'],
+                'url': result['url'],
                 'result': result,
                 'updatetime': time.time()
             }))

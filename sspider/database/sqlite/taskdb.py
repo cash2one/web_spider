@@ -33,6 +33,7 @@ class TaskDB(SQLiteMixin, SplitTableMixin, BaseTaskDB, BaseDB):
                 taskid PRIMARY KEY,
                 project,
                 url, status,
+                seed_url,
                 schedule, fetch, process, track,
                 lastcrawltime, updatetime
                 )''' % tablename)

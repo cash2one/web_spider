@@ -132,12 +132,12 @@ class Processor(object):
 
                     # print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {}
+                    newtask['schedule'] = {'force_update': True}
 
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
                     fetch["data"] = item["data"]
-
+                    newtask["seed_url"] = task["url"]
                     newtask['fetch'] = fetch
                     newtask['process'] = {}
                     newtask['project'] = project
@@ -154,8 +154,8 @@ class Processor(object):
 
                     # print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {}
-
+                    newtask['schedule'] = {'force_update': True}
+                    newtask["seed_url"] = task["url"]
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
                     fetch["data"] = item["data"]
@@ -172,12 +172,12 @@ class Processor(object):
                 if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
                     continue
                 newtask = {}
+                newtask["seed_url"] = task["url"]
                 url = item["url"]
                 # print url
                 #url = quote_chinese(_build_url(url.strip()))
 
-                schedule = {}
-                newtask['schedule'] = schedule
+                newtask['schedule'] = {'force_update': True}
                 fetch = {u'fetch_type': u'phantomjs'}
                 newtask['fetch'] = fetch
 
@@ -257,7 +257,7 @@ class Processor(object):
             #一次发1000个任务，以免频繁发送任务
             for each in (ret.follows[x:x + 1000] for x in range(0, len(ret.follows), 1000)):
                 self.newtask_queue.put([utils.unicode_obj(newtask) for newtask in each])
-                self.result_queue.put([(task, utils.unicode_obj(newtask)) for newtask in each])
+                self.result_queue.put([utils.unicode_obj(newtask) for newtask in each])
 
 
         return True

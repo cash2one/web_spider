@@ -36,6 +36,7 @@ class TaskDB(MySQLMixin, SplitTableMixin, BaseTaskDB, BaseDB):
             `project` varchar(64),
             `url` varchar(1024),
             `status` int(1),
+            `seed_url` varchar(1024),
             `schedule` BLOB,
             `fetch` BLOB,
             `process` BLOB,
