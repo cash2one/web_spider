@@ -132,7 +132,7 @@ class Processor(object):
 
                     # print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {'force_update': True}
+                    newtask['schedule'] = {}
 
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
@@ -154,7 +154,7 @@ class Processor(object):
 
                     # print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {'force_update': True}
+                    newtask['schedule'] = {}
                     newtask["seed_url"] = task["url"]
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
@@ -177,7 +177,7 @@ class Processor(object):
                 # print url
                 #url = quote_chinese(_build_url(url.strip()))
 
-                newtask['schedule'] = {'force_update': True}
+                newtask['schedule'] = {}
                 fetch = {u'fetch_type': u'phantomjs'}
                 newtask['fetch'] = fetch
 

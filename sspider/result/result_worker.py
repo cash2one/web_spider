@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
+import re
 import time
 import json
 import logging
@@ -20,11 +22,18 @@ class ResultWorker(object):
         self.inqueue = inqueue
         self._quit = False
 
+    def _url_match(self, url):
+        filter_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../conf/url_filter.conf'))
+        with open(filter_path, 'r') as f:
+            suffix = f.read().replace('\n', '|')
+        pattern = '.*\.(' + suffix + ')$'
+        return not re.match(pattern, url)
+
     def on_result(self, result):
         '''Called every result'''
         if not result:
             return
-        if 'taskid' in result and 'project' in result and 'url' in result:
+        if 'taskid' in result and 'project' in result and 'url' in result and self._url_match(result['url']):
             logger.info('result %s:%s %s -> %.30r' % (
                 result['project'], result['taskid'], result['url'], result))
 
