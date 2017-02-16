@@ -85,20 +85,23 @@ document.write("ajax.ResponseText length:"+ajax.responseText.length);
 @app.route('/pyspider/test.html')
 def test_page():
     return '''
-<a href="/404">404
-<a href="/links/10/0">0
-<a href="/links/10/1">1
-<a href="/links/10/2">2
-<a href="/links/10/3">3
-<a href="/links/10/4">4
-<a href="/gzip">gzip
-<a href="/get">get
-<a href="/deflate">deflate
-<a href="/html">html
-<a href="/xml">xml
-<a href="/robots.txt">robots
-<a href="/cache">cache
-<a href="/stream/20">stream
+    <div id=abc>-</div>
+    <input type=button id=1 onclick="abc.innerHTML ='<a href=/pyspider/click11111111.html>click1</a>';console.log('Click111');" value="点击后生成链接(1)"/>
+    <input type=button id=2 onclick="abc.innerHTML ='<a href=/pyspider/c22222222.html>click2</a>';console.log('Click22222');" value="点击后生成链接(2)"/>
+<a href="/pyspider/test.html">404</a>
+<a href="/links/10/0">0</a>
+<a href="/links/10/1">1</a>
+<a href="/links/10/2">2</a>
+<a href="/links/10/3">3</a>
+<a href="/links/10/4">4</a>
+<a href="/gzip">gzip</a>
+<a href="/get">get</a>
+<a href="/deflate">deflate</a>
+<a href="/html">html</a>
+<a href="/xml">xml</a>
+<a href="/robots.txt">robots</a>
+<a href="/cache">cache</a>
+<a href="/stream/20">stream</a>
 '''
 
 

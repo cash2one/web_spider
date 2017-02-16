@@ -71,7 +71,7 @@ def cli(ctx, **kwargs):
 
 
     if not kwargs.get('config'):
-        print "usage: webspider.py -c sqlite.conf"
+        print "usage: webspider.py -c test.conf"
         return
 
     if not os.path.exists(kwargs['data_path']):
@@ -214,7 +214,7 @@ def scheduler(ctx, xmlrpc, xmlrpc_host, xmlrpc_port,
     g = ctx.obj
 
     kwargs = dict(taskdb=g.taskdb, projectdb=g.projectdb, resultdb=g.resultdb,
-                  newtask_queue=g.newtask_queue, status_queue=g.status_queue,
+                  newtask_queue=g.newtask_queue, status_queue=g.status_queue, result_queue=g.processor2result,
                   out_queue=g.scheduler2fetcher, data_path=g.get('data_path', 'data'))
     if threads:
         kwargs['threads'] = int(threads)

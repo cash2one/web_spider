@@ -14,8 +14,8 @@ except ImportError:
 
 import six
 from six import iteritems
-from six.moves import cPickle
-
+# from six.moves import cPickle
+import cPickle as pickle
 
 class BaseCounter(object):
 
@@ -319,6 +319,7 @@ class CounterValue(DictMixin):
         return result
 
 
+import os
 class CounterManager(DictMixin):
     """
     A dict like counter manager.
@@ -416,7 +417,7 @@ class CounterManager(DictMixin):
         """Dump counters to file"""
         try:
             with open(filename, 'wb') as fp:
-                cPickle.dump(self.counters, fp)
+                pickle.dump(self.counters, fp)
         except Exception as e:
             logging.warning("can't dump counter to file %s: %s", filename, e)
             return False
@@ -426,7 +427,7 @@ class CounterManager(DictMixin):
         """Load counters to file"""
         try:
             with open(filename) as fp:
-                self.counters = cPickle.load(fp)
+                self.counters = pickle.load(fp)
         except:
             logging.debug("can't load counter from file: %s", filename)
             return False

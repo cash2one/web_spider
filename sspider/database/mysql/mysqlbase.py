@@ -59,4 +59,5 @@ class SplitTableMixin(object):
             return
         tablename = self._tablename(project)
         self._execute("DROP TABLE %s" % self.escape(tablename))
+        self.projects.remove(project)
         self._list_project()

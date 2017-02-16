@@ -11,19 +11,14 @@ logger = logging.getLogger("processor")
 
 from six.moves import queue as Queue
 
-import os
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if ROOT_DIR not in sys.path:
-    sys.path.append(ROOT_DIR)
-
-from libs.url import (
+from sspider.libs.url import (
     quote_chinese, _build_url, _encode_params,
     _encode_multipart_formdata, curl_to_arguments)
-from libs import utils
-from libs.log import LogFormatter
-from libs.utils import pretty_unicode, hide_me
-from libs.response import rebuild_response
-from libs.utils import md5string, timeout, get_domain_from_url
+from sspider.libs import utils
+from sspider.libs.log import LogFormatter
+from sspider.libs.utils import pretty_unicode, hide_me
+from sspider.libs.response import rebuild_response
+from sspider.libs.utils import md5string, timeout, get_domain_from_url
 from project_module import ProjectManager, ProjectFinder
 
 
@@ -132,7 +127,7 @@ class Processor(object):
 
                     # print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {}
+                    newtask['schedule'] = {}  # {'force_update': False}
 
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
@@ -144,7 +139,7 @@ class Processor(object):
                     newtask['url'] = item["url"]
                     newtask['taskid'] = self.get_taskid(newtask)
                     tasks.append(newtask)
-            # 提取表单
+            #提取表单
             if content["response"]["details"].has_key("forms"):
                 forms = content["response"]["details"]["forms"]
                 for item in forms:
@@ -152,9 +147,9 @@ class Processor(object):
                     if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
                         continue
 
-                    # print item["url"]
+                    #print item["url"]
                     newtask = {}
-                    newtask['schedule'] = {}
+                    newtask['schedule'] = {}  #{'force_update': True}
                     newtask["seed_url"] = task["url"]
                     fetch = {u'fetch_type': u'phantomjs'}
                     fetch["method"] = item["method"]
@@ -166,18 +161,19 @@ class Processor(object):
                     newtask['url'] = item["url"]
                     newtask['taskid'] = self.get_taskid(newtask)
                     tasks.append(newtask)
-            # 提取链接
+            #提取链接
             for item in content["response"]["details"]["links"]:
-                # 只爬取设定的网站
+                #只爬取设定的网站
                 if get_domain_from_url(task["url"]) != get_domain_from_url(item["url"]):
                     continue
                 newtask = {}
                 newtask["seed_url"] = task["url"]
                 url = item["url"]
-                # print url
+                #print url
                 #url = quote_chinese(_build_url(url.strip()))
 
-                newtask['schedule'] = {}
+
+                newtask['schedule'] = {}  #{'force_update': True}
                 fetch = {u'fetch_type': u'phantomjs'}
                 newtask['fetch'] = fetch
 
@@ -257,7 +253,7 @@ class Processor(object):
             #一次发1000个任务，以免频繁发送任务
             for each in (ret.follows[x:x + 1000] for x in range(0, len(ret.follows), 1000)):
                 self.newtask_queue.put([utils.unicode_obj(newtask) for newtask in each])
-                self.result_queue.put([utils.unicode_obj(newtask) for newtask in each])
+                #self.result_queue.put([utils.unicode_obj(newtask) for newtask in each])
 
 
         return True

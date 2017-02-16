@@ -6,6 +6,7 @@ import re
 import time
 import json
 import logging
+import urlparse
 from six.moves import queue as Queue
 logger = logging.getLogger("result")
 
@@ -26,33 +27,34 @@ class ResultWorker(object):
         filter_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../conf/url_filter.conf'))
         with open(filter_path, 'r') as f:
             suffix = f.read().replace('\n', '|')
-        pattern = '.*\.(' + suffix + ')$'
-        return not re.match(pattern, url)
+        pattern = '^\.(' + suffix + ')$'
+        text = os.path.splitext(urlparse.urlparse(url).path)
+        return not re.match(pattern, text[1])
 
     def on_result(self, result):
         '''Called every result'''
         if not result:
             return
-        if 'taskid' in result and 'project' in result and 'url' in result and self._url_match(result['url']):
-            logger.info('result %s:%s %s -> %.30r' % (
-                result['project'], result['taskid'], result['url'], result))
+        if 'taskid' in result and 'project' in result and 'url' in result:
+            if self._url_match(result['url']):
+                logger.info('result %s:%s %s -> %.30r' % (
+                    result['project'], result['taskid'], result['url'], result))
+                data_str = result['fetch'].get('data', '')
+                data_dict = {}
 
-            data_str = result['fetch'].get('data', '')
-            data_dict = {}
+                if data_str:
+                    for i in data_str.split('&'):
+                        data_dict[i.split('=')[0]] = i.split('=')[1]
 
-            if data_str:
-                for i in data_str.split('&'):
-                    data_dict[i.split('=')[0]] = i.split('=')[1]
-
-            obj = {
-                'url': result['url'],
-                'type': result['fetch'].get('method', 'link'),
-                'param': {
-                    'data': data_dict
-                },
-                'seed_url': result['seed_url']
-            }
-            return self.resultdb.save(project=result['project'], result=obj)
+                obj = {
+                    'url': result['url'],
+                    'type': result['fetch'].get('method', 'link'),
+                    'param': {
+                        'data': data_dict
+                    },
+                    'seed_url': result['seed_url']
+                }
+                return self.resultdb.save(project=result['project'], result=obj)
         else:
             logger.warning('result UNKNOW -> %.30r' % result)
             return
@@ -67,11 +69,7 @@ class ResultWorker(object):
         while not self._quit:
             try:
                 result = self.inqueue.get(timeout=1)
-                if isinstance(result, dict) and result.get('finish'):
-                    self.resultdb.finish(result['finish'])
-                    continue
-                for item in result:
-                    self.on_result(item)
+                self.on_result(result)
 
             except Queue.Empty as e:
                 continue

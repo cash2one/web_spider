@@ -3,7 +3,6 @@
 
  2017.1.1
  */
-var cn = 0;
 var port, server, service,
     system = require('system'),
     webpage = require('webpage'),
@@ -16,9 +15,6 @@ if (system.args.length !== 2)
 }
 else
 {
-    cn = cn + 1;
-    console.log("!!!!!!!!!!!!!!!" + cn);
-
     port = system.args[1];
     server = require('webserver').create();
     //console.debug = function(){};

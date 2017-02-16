@@ -36,7 +36,6 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
                         type,
                         param,
                         seed_url,
-                        status,
                         updatetime
                         )''' % tablename)
 
@@ -52,6 +51,7 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
 
     def save(self, project, result):
         tablename = self._tablename(project)
+        self._list_project()
         if project not in self.projects:
             self._create_project(project)
             self._list_project()
@@ -61,7 +61,6 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
             'type': result['type'],
             'param': result['param'],
             'seed_url': result['seed_url'],
-            'status': 0,
             'updatetime': time.time()
         }
         return self._replace(tablename, **self._stringify(obj))
@@ -96,13 +95,3 @@ class ResultDB(SQLiteMixin, SplitTableMixin, BaseResultDB, BaseDB):
         for task in self._select2dic(tablename, what=fields,
                                      where=where, where_values=(url,)):
             return self._parse(task)
-
-    def finish(self, project):
-        if project not in self.projects:
-            self._list_project()
-        if project not in self.projects:
-            return
-        tablename = self._tablename(project)
-        where = "1=1"
-        value = {"status": 1}
-        return self._update(tablename=tablename, where=where, **value)

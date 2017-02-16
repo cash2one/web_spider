@@ -93,7 +93,9 @@ exports.open = function(page, fetch, response) {
             console.log("Phantomjs err:"+e);
         }
     }
-
+    page.onClosing = function(closingPage) {
+  ;//console.log('closing URL: ' + closingPage.url);
+};
     function quit() {
         try {
             events.invokeListeners('onExit')
@@ -140,6 +142,7 @@ exports.open = function(page, fetch, response) {
         } catch (e) {}
 
         utils.printJSON(jsonType, output);
+
         //quit();
     });
 
@@ -149,7 +152,7 @@ exports.open = function(page, fetch, response) {
 
     // impose a strict timeout in case this phantomjs does not die properly (180s is the default by scrapy)
     opt.timeout = opt.timeout || 180;
-    function setPageTimeout(timeout) {
+    /*function setPageTimeout(timeout) {
         window.clearTimeout(pageTimeoutTimer);
         pageTimeoutTimer = window.setTimeout(function () {
             utils.printJSON('error', {
@@ -162,7 +165,7 @@ exports.open = function(page, fetch, response) {
             //quit();
         }, timeout || (opt.timeout * 1000));
     }
-    setPageTimeout();
+    //setPageTimeout();*/
 
     opt.debug = opt.debug ;//|| false;
     opt.method = opt.method || 'get';
@@ -318,7 +321,7 @@ exports.open = function(page, fetch, response) {
 
     events.addListener('MainFrameSteady', function (response) {
         // extend timeout to allow sufficient time for event enumerations
-        setPageTimeout();
+        //setPageTimeout();
 
         // here we terminate this process with the response we collected
 
